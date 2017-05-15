@@ -1,0 +1,48 @@
+-- Database: geodata
+
+-- DROP DATABASE geodata;
+
+CREATE DATABASE geodata
+  WITH OWNER = postgres
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       LC_COLLATE = 'English_United States.1252'
+       LC_CTYPE = 'English_United States.1252'
+       CONNECTION LIMIT = -1;
+
+-- Table: allareas
+
+-- DROP TABLE allareas;
+
+CREATE TABLE allareas
+(
+  userid bigint NOT NULL,
+  the_geom geometry NOT NULL,
+  areaid integer NOT NULL DEFAULT nextval('"allAreas_areaId_seq"'::regclass),
+  username character varying,
+  CONSTRAINT geo_layers_pkey PRIMARY KEY (areaid),
+  CONSTRAINT enforce_dims_the_geom CHECK (st_ndims(the_geom) = 2)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE allareas
+  OWNER TO postgres;
+-- Table: allshapes
+
+-- DROP TABLE allshapes;
+
+CREATE TABLE allshapes
+(
+  shapeid integer NOT NULL DEFAULT nextval('"allShapes_shapeId_seq"'::regclass),
+  userid bigint NOT NULL,
+  areaid bigint,
+  the_geom geometry NOT NULL,
+  CONSTRAINT geo_shapes_pkey PRIMARY KEY (shapeid),
+  CONSTRAINT enforce_dims_the_geom CHECK (st_ndims(the_geom) = 2)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE allshapes
+  OWNER TO postgres;
