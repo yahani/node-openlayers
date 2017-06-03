@@ -162,6 +162,49 @@ window.onload = function () {
     bindEvents(map, allAreasLayer, workspaces);
     $(".save").removeClass("buttonColor").addClass("disable-button");
     $(".save").attr('disabled', true)
+	
+	var client = new Tuio.Client({
+		host: "http://localhost:3000"
+	}),
+	onAddTuioCursor = function(addCursor) {
+            var $addCursor = $('<div class="tuioCursor"></div>');
+                $("body").append($addCursor);
+                cursors[addCursor.getCursorId()] = $addCursor;
+                onUpdateTuioCursor(addCursor);
+},
+
+onUpdateTuioCursor = function(updateCursor) {
+  console.log(updateCursor);
+},
+
+onRemoveTuioCursor = function(removeCursor) {
+  console.log(removeCursor);
+},
+
+onAddTuioObject = function(addObject) {
+    console.log(addObject);
+},
+
+onUpdateTuioObject = function(updateObject) {
+    console.log(updateObject);
+},
+
+onRemoveTuioObject = function(removeObject) {
+    console.log(removeObject);
+},
+
+onRefresh = function(time) {
+  console.log(time);
+};
+
+client.on("addTuioCursor", onAddTuioCursor);
+client.on("updateTuioCursor", onUpdateTuioCursor);
+client.on("removeTuioCursor", onRemoveTuioCursor);
+client.on("addTuioObject", onAddTuioObject);
+client.on("updateTuioObject", onUpdateTuioObject);
+client.on("removeTuioObject", onRemoveTuioObject);
+client.on("refresh", onRefresh);
+client.connect();
 };
 
 function getUserId(workspaces) {
@@ -235,23 +278,26 @@ function bindEvents(map, allAreasLayer, workspaces) {
                     var interaction2 = new ol.interaction.Draw({
                         source: layer.getSource(),
                         type: /** @type {ol.geom.GeometryType} */ 'Polygon', //or LineString for unclosed shape
-                        style: new ol.style.Style({
-                            image: new ol.style.Circle({
-                                radius: 5,
-                                fill: new ol.style.Fill({
-                                    color: '#008000'
-                                })
-                            }),
-                            geometry: function (feature) {
-                                // return the coordinates of the first ring of the polygon
-                                var coordinates = feature.getGeometry().getCoordinates()[0];
-                                return new ol.geom.MultiPoint(coordinates);
-                            }
-                        }),
-                        condition: function (evt) {
+                        //freehand: true,
+//                        style: new ol.style.Style({
+//                            image: new ol.style.Circle({
+//                                radius: 5,
+//                                fill: new ol.style.Fill({
+//                                    color: '#008000'
+//                                })
+//                            }),
+//                            geometry: function (feature) {
+//                                // return the coordinates of the first ring of the polygon
+//                                var coordinates = feature.getGeometry().getCoordinates()[0];
+//                                return new ol.geom.MultiPoint(coordinates);
+//                            }
+//                        }),
+                        freehandCondition: function (evt) {
                             var coord = evt.coordinate;
                             var myArea = layer.getSource().getFeatures()[0];//area is the first feature of the layers feature collection
                             var y = myArea.getGeometry().intersectsCoordinate(coord);
+                            map.getInteractions().getArray()
+                            //console.log("go")
                             return ol.events.condition.noModifierKeys(evt) && y;
                         }
                     });
@@ -285,23 +331,25 @@ function bindEvents(map, allAreasLayer, workspaces) {
                     var interaction3 = new ol.interaction.Draw({
                         source: layer.getSource(),
                         type: /** @type {ol.geom.GeometryType} */ 'Polygon', //or LineString for unclosed shape
-                        style: new ol.style.Style({
-                            image: new ol.style.Circle({
-                                radius: 5,
-                                fill: new ol.style.Fill({
-                                    color: '#FF0000'
-                                })
-                            }),
-                            geometry: function (feature) {
-                                // return the coordinates of the first ring of the polygon
-                                var coordinates = feature.getGeometry().getCoordinates()[0];
-                                return new ol.geom.MultiPoint(coordinates);
-                            }
-                        }),
-                        condition: function (evt) {
+                        //freehand: true,
+//                        style: new ol.style.Style({
+//                            image: new ol.style.Circle({
+//                                radius: 5,
+//                                fill: new ol.style.Fill({
+//                                    color: '#FF0000'
+//                                })
+//                            }),
+//                            geometry: function (feature) {
+//                                // return the coordinates of the first ring of the polygon
+//                                var coordinates = feature.getGeometry().getCoordinates()[0];
+//                                return new ol.geom.MultiPoint(coordinates);
+//                            }
+//                        }),
+                        freehandCondition: function (evt) {
                             var coord = evt.coordinate;
                             var myArea = layer.getSource().getFeatures()[0];//area is the first feature of the layers feature collection
                             var y = myArea.getGeometry().intersectsCoordinate(coord);
+                            //console.log("no go")
                             return ol.events.condition.noModifierKeys(evt) && y;
                         }
                     });
@@ -335,19 +383,19 @@ function bindEvents(map, allAreasLayer, workspaces) {
                     var interaction3 = new ol.interaction.Draw({
                         source: layer.getSource(),
                         type: /** @type {ol.geom.GeometryType} */ 'Polygon', //or LineString for unclosed shape
-                        style: new ol.style.Style({
-                            image: new ol.style.Circle({
-                                radius: 5,
-                                fill: new ol.style.Fill({
-                                    color: '#0000FF'
-                                })
-                            }),
-                            geometry: function (feature) {
-                                // return the coordinates of the first ring of the polygon
-                                var coordinates = feature.getGeometry().getCoordinates()[0];
-                                return new ol.geom.MultiPoint(coordinates);
-                            }
-                        }),
+//                        style: new ol.style.Style({
+//                            image: new ol.style.Circle({
+//                                radius: 5,
+//                                fill: new ol.style.Fill({
+//                                    color: '#0000FF'
+//                                })
+//                            }),
+//                            geometry: function (feature) {
+//                                // return the coordinates of the first ring of the polygon
+//                                var coordinates = feature.getGeometry().getCoordinates()[0];
+//                                return new ol.geom.MultiPoint(coordinates);
+//                            }
+//                        }),
                         condition: function (evt) {
                             var coord = evt.coordinate;
                             var myArea = layer.getSource().getFeatures()[0];//area is the first feature of the layers feature collection
